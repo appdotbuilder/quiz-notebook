@@ -1,16 +1,25 @@
 
+import { db } from '../db';
+import { quizzesTable } from '../db/schema';
 import { type CreateQuizInput, type Quiz } from '../schema';
 
-export async function createQuiz(input: CreateQuizInput): Promise<Quiz> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is creating a new quiz and persisting it in the database.
-    return Promise.resolve({
-        id: 0, // Placeholder ID
+export const createQuiz = async (input: CreateQuizInput): Promise<Quiz> => {
+  try {
+    // Insert quiz record
+    const result = await db.insert(quizzesTable)
+      .values({
         title: input.title,
         description: input.description || null,
         teacher_id: input.teacher_id,
-        is_published: false,
-        created_at: new Date(),
-        updated_at: new Date()
-    } as Quiz);
-}
+        is_published: false // Default value
+      })
+      .returning()
+      .execute();
+
+    const quiz = result[0];
+    return quiz;
+  } catch (error) {
+    console.error('Quiz creation failed:', error);
+    throw error;
+  }
+};

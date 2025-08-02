@@ -1,8 +1,18 @@
 
+import { db } from '../db';
+import { quizzesTable } from '../db/schema';
 import { type Quiz } from '../schema';
 
 export async function getQuizzes(): Promise<Quiz[]> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is fetching all quizzes from the database.
-    return [];
+  try {
+    const results = await db.select()
+      .from(quizzesTable)
+      .execute();
+
+    // No numeric conversions needed for quizzes table - all fields are appropriate types
+    return results;
+  } catch (error) {
+    console.error('Failed to fetch quizzes:', error);
+    throw error;
+  }
 }
